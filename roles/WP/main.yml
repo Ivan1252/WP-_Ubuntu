@@ -1,0 +1,38 @@
+---
+- name: download WordPress and unpack
+  unarchive:
+       src: https://wordpress.org/latest.tar.gz
+       dest: "/var/www/html"
+       remote_src: yes
+       creates: "/var/www/wordpress"
+
+
+- name: ownership
+  file:
+       path: "/var/www/html"
+       state: directory
+       recurse: yes
+       owner: www-data
+       group: www-data
+
+
+- name: update
+  lineinfile:
+    dest=/etc/apache2/sites-enabled/000-default.conf
+    regexp="(.)+DocumentRoot /var/www/html"
+    line="DocumentRoot /var/www/wordpress"
+
+- name: setup wp-config
+  template:
+       src: "files/wp-config.php"
+       dest: "/var/www/html/wordpress/wp-config.php"
+
+- name: restart apache
+  service: name=apache2 state=restarted
+
+- name: permissions for directories
+  shell: "/usr/bin/find /var/www/html/wordpress/ -type d -exec chmod 750 {} \\;"
+
+
+- name: permissions for files
+  shell: "/usr/bin/find /var/www/html/wordpress/ -type f -exec chmod 640 {} \\;"

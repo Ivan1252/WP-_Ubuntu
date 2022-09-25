@@ -1,0 +1,26 @@
+---
+- name: install MariaDB server
+  apt: name=mariadb-server state=latest
+
+- name: install MariaDB client
+  apt: name=mariadb-client state=latest
+
+
+
+- name: Create WP DB
+  mysql_db:
+   config_file: "/etc/mysql/my.cnf"
+   name: db1
+   state: present
+   login_user: root
+   login_password: root
+
+- name: Create DB user
+  mysql_user:
+   config_file: "/etc/mysql/my.cnf"
+   name: admin
+   password: admin
+   priv: db1.*:ALL
+   state: present
+   login_user: root
+   login_password: root

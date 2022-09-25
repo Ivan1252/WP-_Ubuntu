@@ -1,0 +1,14 @@
+---
+- name: install Apache2
+  apt: name=apache2 state=latest
+- name: start webservice
+  service: name=apache2 state=started enabled=yes
+
+- name: install php
+  apt: name={{ item }} state=latest
+  loop:
+    - python3-pymysql
+    - php
+    - php-mysql
+    - libapache2-mod-php
+    - python3-pip
